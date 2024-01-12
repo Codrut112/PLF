@@ -1,0 +1,20 @@
+%gen(N,E)=1.[0],n=1
+%       2.0 U gen(N-1,0),E!=0,n>2
+%       3.1 U gen(N-1,1),E!=1
+%       4.-1 U gen(N-1,-1),E!=-1
+
+
+%model flux(i,i,o)
+
+gen(1,_,[0]):-!.
+gen(N,E,[0|R]):-not(E=:=0),N>2,N1 is N-1,gen(N1,0,R).
+gen(N,E,[1|R]):-not(E=:=1),N1 is N-1,gen(N1,1,R).
+gen(N,E,[-1|R]):-not(E=:= -1),N1 is N-1,gen(N1,-1,R).
+
+sol(N,R):-M is 2*N,findall([0|S],gen(M,0,S),R).
+
+
+
+
+
+

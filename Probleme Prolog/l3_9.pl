@@ -1,0 +1,40 @@
+%perm(N,L,Col)=1.[],N=0
+%              2.c U perm(N,sterge(L,c)),unde c=candidat(l),propr(c,Col)
+
+
+%sterge(l1...ln,E)={[l2...ln,l1=E}
+%                  {l1 U sterge(l2...ln,E)
+
+  sterge([H|T],H,T).
+  sterge([H|T],E,[H|R]):-sterge(T,E,R).
+
+%candidat(l1...ln)=1.l1
+%                  2. candidat(l2...ln),n>0
+
+candidat([H|_],H).
+candidat([_|T],R):-candidat(T,R).
+
+%perm(N,L,Col)=1.[],N=0
+%              2.c U perm(N,sterge(L,c)),unde c=candidat(l),propr(c,Col)
+%              3.c U perm(N,sterge(L,c)),unde c-candidat(l)
+%model flux(i,i,i,o)
+propr(E,[H|_]):-1 is abs(E-H),!.
+propr(E,[_|T]):-propr(E,T).
+
+%model flux(i,i,i,o)
+perm_aux(0,_,_,[]).
+perm_aux(N,L,[],[X|R]):-candidat(L,X),N1 is N-1,sterge(L,X,L1), perm_aux(N1,L1,[X],R).
+perm_aux(N,L,Col,[X|R]):-candidat(L,X),propr(X,Col),N1 is N-1,sterge(L,X,L1), perm_aux(N1,L1,[X|Col],R).
+
+%propr(E,l1...ln)={true,abs(E-l1)=1}
+%                 {fals,n=0}
+%                 {propr(E,l2...ln),altfel}
+
+%propr(E,[H|_]):-1 is abs(E-H),!.
+%propr(E,[_|T]):-propr(E,T).
+
+create_list(0,[]):-!.
+create_list(N,[N|R]):-N1 is N-1,create_list(N1,R).
+
+perm(N,R):-create_list(N,A),findall(S,perm_aux(N,A,[],S),R).
+
